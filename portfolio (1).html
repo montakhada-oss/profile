@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Montak Singh Hada — Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#0a0c10;
+  --surface:#111318;
+  --surface2:#181c24;
+  --border:#1e2330;
+  --border2:#252c3d;
+  --gold:#c9a84c;
+  --gold-dim:#a07830;
+  --gold-glow:rgba(201,168,76,0.12);
+  --cyan:#4ec9b0;
+  --red:#e06c75;
+  --text:#e8eaf0;
+  --text2:#8b91a8;
+  --text3:#4a5068;
+  --mono:'IBM Plex Mono',monospace;
+  --serif:'Playfair Display',serif;
+  --sans:'Plus Jakarta Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* GRAIN OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.6;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,5vw,5rem);border-bottom:1px solid var(--border);background:rgba(10,12,16,0.9);backdrop-filter:blur(20px);}
+.nav-logo{font-family:var(--mono);font-size:0.82rem;font-weight:500;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{font-family:var(--mono);font-size:0.72rem;font-weight:400;color:var(--text2);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{font-family:var(--mono);font-size:0.72rem;font-weight:500;color:var(--bg);background:var(--gold);padding:0.4rem 1rem;border-radius:3px;text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:opacity 0.2s;}
+.nav-cta:hover{opacity:0.85;}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;align-items:center;padding:100px clamp(1.5rem,8vw,7rem) 5rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(201,168,76,0.05) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(78,201,176,0.04) 0%,transparent 60%);pointer-events:none;}
+.hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.3;pointer-events:none;}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1.1fr 0.9fr;gap:5rem;align-items:center;}
+.hero-tag{font-family:var(--mono);font-size:0.7rem;font-weight:500;color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.75rem;}
+.hero-tag::before{content:'';display:block;width:28px;height:1px;background:var(--gold);}
+h1{font-family:var(--serif);font-size:clamp(3rem,6vw,5rem);font-weight:900;line-height:1.02;letter-spacing:-0.02em;color:#fff;margin-bottom:0.2rem;}
+.hero-name-sub{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;color:var(--gold);letter-spacing:-0.01em;margin-bottom:1.5rem;}
+.hero-desc{font-size:0.95rem;color:var(--text2);line-height:1.8;max-width:420px;margin-bottom:2.5rem;}
+.hero-actions{display:flex;gap:0.75rem;flex-wrap:wrap;}
+.btn-gold{display:inline-flex;align-items:center;gap:0.5rem;background:var(--gold);color:var(--bg);font-family:var(--mono);font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:0.75rem 1.5rem;border-radius:3px;text-decoration:none;transition:all 0.2s;}
+.btn-gold:hover{background:#e8c05a;box-shadow:0 0 24px rgba(201,168,76,0.3);}
+.btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;background:transparent;color:var(--text2);font-family:var(--mono);font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:0.75rem 1.5rem;border-radius:3px;text-decoration:none;border:1px solid var(--border2);transition:all 0.2s;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+/* HERO RIGHT — STAT PANEL */
+.hero-panel{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;}
+.panel-header{background:var(--surface2);border-bottom:1px solid var(--border);padding:0.85rem 1.25rem;display:flex;align-items:center;gap:0.5rem;}
+.panel-dot{width:8px;height:8px;border-radius:50%;}
+.panel-title{font-family:var(--mono);font-size:0.68rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-left:0.5rem;}
+.panel-body{padding:1.5rem;}
+.panel-stat{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid var(--border);}
+.panel-stat:last-child{border-bottom:none;}
+.ps-label{font-family:var(--mono);font-size:0.7rem;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;}
+.ps-val{font-family:var(--mono);font-size:0.88rem;font-weight:500;color:var(--gold);}
+.ps-bar{height:3px;background:var(--border2);border-radius:2px;margin-top:0.3rem;overflow:hidden;}
+.ps-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:2px;transition:width 1.2s ease;}
+.availability-badge{margin-top:1.25rem;background:rgba(78,201,176,0.08);border:1px solid rgba(78,201,176,0.2);border-radius:4px;padding:0.6rem 0.9rem;display:flex;align-items:center;gap:0.6rem;font-family:var(--mono);font-size:0.7rem;color:var(--cyan);}
+.avail-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── SECTION COMMON ── */
+.section-wrap{padding:6rem clamp(1.5rem,8vw,7rem);}
+.section-wrap.alt{background:var(--surface);}
+.sec-inner{max-width:1100px;margin:0 auto;}
+.sec-eyebrow{font-family:var(--mono);font-size:0.68rem;font-weight:500;color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.75rem;}
+.sec-eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--gold);}
+.sec-title{font-family:var(--serif);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:900;color:#fff;letter-spacing:-0.02em;margin-bottom:3rem;}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:5rem;align-items:start;}
+.about-meta{display:flex;flex-direction:column;gap:0;}
+.meta-row{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border);}
+.meta-row:first-child{border-top:1px solid var(--border);}
+.meta-key{font-family:var(--mono);font-size:0.68rem;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;}
+.meta-val{font-size:0.85rem;color:var(--text);text-align:right;}
+.about-text{font-size:0.95rem;color:var(--text2);line-height:1.85;}
+.about-text p+p{margin-top:1.1rem;}
+.hl{color:var(--gold);font-weight:600;}
+.hl2{color:var(--cyan);}
+
+/* ── SKILLS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.skill-cell{background:var(--surface);padding:1.6rem;transition:background 0.2s;}
+.skill-cell:hover{background:var(--surface2);}
+.skill-num{font-family:var(--mono);font-size:0.65rem;color:var(--text3);margin-bottom:0.75rem;}
+.skill-name{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.75rem;}
+.skill-pills{display:flex;flex-wrap:wrap;gap:0.35rem;}
+.pill{font-family:var(--mono);font-size:0.62rem;color:var(--text2);background:var(--border2);padding:0.2rem 0.5rem;border-radius:2px;letter-spacing:0.03em;}
+
+/* ── EXPERIENCE ── */
+.exp-timeline{position:relative;padding-left:2rem;}
+.exp-timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold) 0%,var(--border2) 100%);}
+.exp-item{position:relative;margin-bottom:3rem;}
+.exp-item:last-child{margin-bottom:0;}
+.exp-dot{position:absolute;left:-2.35rem;top:0.35rem;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);box-shadow:0 0 0 3px var(--gold-glow);}
+.exp-period{font-family:var(--mono);font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;}
+.exp-title{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:0.2rem;}
+.exp-org{font-size:0.85rem;color:var(--cyan);font-weight:500;margin-bottom:1rem;}
+.exp-loc{font-family:var(--mono);font-size:0.65rem;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.9rem;}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:0.5rem;}
+.exp-bullets li{font-size:0.88rem;color:var(--text2);padding-left:1.2rem;position:relative;line-height:1.65;}
+.exp-bullets li::before{content:'›';position:absolute;left:0;color:var(--gold);font-weight:700;}
+
+/* ── PROJECTS ── */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.proj-card{background:var(--surface);padding:1.75rem;display:flex;flex-direction:column;gap:0.85rem;cursor:pointer;transition:background 0.2s;position:relative;}
+.proj-card:hover{background:var(--surface2);}
+.proj-card.has-output:hover .proj-output-hint{opacity:1;}
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.proj-num{font-family:var(--mono);font-size:0.65rem;color:var(--text3);}
+.proj-badges{display:flex;gap:0.4rem;align-items:center;}
+.badge-new{font-family:var(--mono);font-size:0.6rem;font-weight:500;background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:0.15rem 0.45rem;border-radius:2px;letter-spacing:0.06em;text-transform:uppercase;}
+.badge-live{font-family:var(--mono);font-size:0.6rem;font-weight:500;background:rgba(78,201,176,0.1);color:var(--cyan);border:1px solid rgba(78,201,176,0.25);padding:0.15rem 0.45rem;border-radius:2px;letter-spacing:0.06em;text-transform:uppercase;}
+.proj-icon{font-size:1.5rem;margin-bottom:0.2rem;}
+.proj-title{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:#fff;line-height:1.3;}
+.proj-desc{font-size:0.83rem;color:var(--text2);line-height:1.65;flex:1;}
+.proj-stack{display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.25rem;}
+.proj-footer{display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;padding-top:0.85rem;border-top:1px solid var(--border);}
+.proj-link{font-family:var(--mono);font-size:0.68rem;color:var(--text3);text-decoration:none;letter-spacing:0.06em;transition:color 0.2s;}
+.proj-link:hover{color:var(--gold);}
+.proj-output-hint{font-family:var(--mono);font-size:0.68rem;color:var(--cyan);opacity:0;transition:opacity 0.2s;display:flex;align-items:center;gap:0.3rem;}
+.proj-output-hint::before{content:'▶';font-size:0.6rem;}
+
+/* ── CERTIFICATIONS ── */
+.certs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.cert-cell{background:var(--surface);padding:1.5rem 1.75rem;transition:background 0.2s;}
+.cert-cell:hover{background:var(--surface2);}
+.cert-icon-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;}
+.cert-ico{font-size:1.3rem;}
+.cert-issuer{font-family:var(--mono);font-size:0.65rem;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;}
+.cert-name{font-size:0.9rem;font-weight:600;color:#fff;line-height:1.4;margin-bottom:0.3rem;}
+.cert-detail{font-family:var(--mono);font-size:0.68rem;color:var(--text3);}
+.hackathon-bar{margin-top:1.5rem;background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:1.25rem 1.75rem;display:flex;align-items:center;gap:1.25rem;}
+.hack-medal{font-size:1.6rem;}
+.hack-title{font-size:0.92rem;font-weight:600;color:#fff;}
+.hack-sub{font-family:var(--mono);font-size:0.7rem;color:var(--text3);margin-top:0.25rem;}
+
+/* ── CONTACT ── */
+#contact-section{background:var(--surface);}
+.contact-inner{max-width:700px;margin:0 auto;text-align:center;}
+.contact-desc{font-size:0.95rem;color:var(--text2);margin-bottom:3rem;line-height:1.8;}
+.contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2rem;}
+.contact-cell{background:var(--surface2);padding:1.4rem;text-align:left;text-decoration:none;color:inherit;transition:background 0.2s;display:flex;align-items:center;gap:1rem;}
+.contact-cell:hover{background:#1a1f2e;}
+.contact-ico{font-size:1.3rem;flex-shrink:0;}
+.contact-label{font-family:var(--mono);font-size:0.63rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.2rem;}
+.contact-val{font-size:0.85rem;color:var(--text);font-weight:500;}
+
+footer{text-align:center;padding:2.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:0.68rem;color:var(--text3);letter-spacing:0.06em;}
+
+/* ── ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(5,7,12,0.88);backdrop-filter:blur(8px);overflow-y:auto;padding:2rem 1rem;}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:1020px;margin:auto;overflow:hidden;animation:mIn 0.28s ease;}
+@keyframes mIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface2);position:sticky;top:0;z-index:10;}
+.modal-hdr-l{display:flex;align-items:center;gap:0.9rem;}
+.modal-hdr-title{font-family:var(--serif);font-size:1rem;font-weight:700;color:#fff;}
+.modal-hdr-sub{font-family:var(--mono);font-size:0.65rem;color:var(--text3);margin-top:1px;letter-spacing:0.04em;}
+.modal-close{width:30px;height:30px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:0.9rem;color:var(--text3);display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.modal-close:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.modal-body{padding:2rem;}
+
+/* NOTEBOOK inside modal */
+.nb-sec-title{font-family:var(--serif);font-size:1rem;font-weight:700;color:#fff;margin:2rem 0 0.25rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);}
+.nb-sec-sub{font-family:var(--mono);font-size:0.68rem;color:var(--text3);margin-bottom:1.25rem;letter-spacing:0.04em;}
+.nb-cell{margin-bottom:1.1rem;}
+.nb-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:3px;}
+.nb-lbl{font-family:var(--mono);font-size:0.62rem;color:var(--text3);min-width:52px;padding-top:10px;text-align:right;user-select:none;}
+.nb-code{background:#0d1117;border:1px solid var(--border2);border-radius:6px;padding:10px 14px;flex:1;overflow-x:auto;}
+.nb-code code{font-family:var(--mono);font-size:11.5px;color:#c9d1d9;white-space:pre;line-height:1.65;}
+.kw{color:#ff7b72;}.fn{color:#79c0ff;}.st{color:#a5d6ff;}.cm{color:#6a737d;font-style:italic;}
+.nb-out{margin-left:62px;font-family:var(--mono);font-size:0.72rem;color:#22c55e;background:rgba(34,197,94,0.06);border-left:2px solid rgba(34,197,94,0.3);padding:7px 12px;border-radius:0 4px 4px 0;margin-bottom:0.6rem;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.kpi-box{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:12px 14px;}
+.kpi-v{font-family:var(--mono);font-size:1.35rem;font-weight:500;color:var(--gold);line-height:1.1;}
+.kpi-l{font-family:var(--mono);font-size:0.62rem;color:var(--text3);margin-top:4px;letter-spacing:0.04em;}
+.kpi-d{font-family:var(--mono);font-size:0.62rem;margin-top:5px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;}
+.chart-card{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:14px;}
+.chart-title{font-family:var(--sans);font-size:0.78rem;font-weight:600;color:#fff;margin-bottom:2px;}
+.chart-sub{font-family:var(--mono);font-size:0.62rem;color:var(--text3);margin-bottom:10px;}
+.leg-row{display:flex;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:0.62rem;color:var(--text3);margin-bottom:8px;}
+.leg-sq{width:8px;height:8px;border-radius:1px;display:inline-block;margin-right:3px;vertical-align:middle;}
+.carrier-tbl{width:100%;border-collapse:collapse;font-size:0.78rem;}
+.carrier-tbl th{text-align:left;font-family:var(--mono);font-size:0.62rem;font-weight:500;color:var(--text3);padding:6px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:0.06em;}
+.carrier-tbl td{padding:8px 10px;border-bottom:1px solid #1a1f2a;color:var(--text);}
+.carrier-tbl tr:last-child td{border-bottom:none;}
+.b-ok{display:inline-block;padding:2px 6px;border-radius:3px;font-family:var(--mono);font-size:0.62rem;font-weight:500;background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
+.b-warn{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2);}
+.b-bad{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
+.risk-rows{display:flex;flex-direction:column;gap:7px;margin-bottom:1.5rem;}
+.risk-row{display:grid;grid-template-columns:80px 1fr 36px;gap:8px;align-items:center;font-family:var(--mono);font-size:0.72rem;}
+.risk-bar{height:5px;border-radius:3px;background:var(--border2);overflow:hidden;}
+.risk-fill{height:100%;border-radius:3px;}
+.top-tbl{width:100%;border-collapse:collapse;}
+.top-tbl th{font-family:var(--mono);font-size:0.62rem;font-weight:500;color:var(--text3);text-align:right;padding:5px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:0.06em;}
+.top-tbl th:first-child{text-align:left;}
+.top-tbl td{padding:6px 8px;text-align:right;border-bottom:1px solid #1a1f2a;font-family:var(--mono);font-size:0.72rem;color:var(--text);}
+.top-tbl td:first-child{text-align:left;color:var(--text3);}
+.top-tbl tr:last-child td{border-bottom:none;}
+.ins-box{background:rgba(59,130,246,0.06);border-left:2px solid #3b82f6;border-radius:0 5px 5px 0;padding:10px 14px;margin-bottom:9px;font-size:0.82rem;color:var(--text2);line-height:1.65;}
+.ins-box.warn{background:rgba(249,115,22,0.06);border-color:#f97316;}
+.ins-box.ok{background:rgba(34,197,94,0.06);border-color:#22c55e;}
+.ins-box.amber{background:rgba(234,179,8,0.06);border-color:#eab308;}
+.ins-lbl{font-family:var(--mono);font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:#3b82f6;margin-bottom:4px;}
+.ins-box.warn .ins-lbl{color:#f97316;}.ins-box.ok .ins-lbl{color:#22c55e;}.ins-box.amber .ins-lbl{color:#eab308;}
+
+@media(max-width:900px){
+  .hero-inner,.about-grid{grid-template-columns:1fr;gap:3rem;}
+  .skills-grid{grid-template-columns:1fr 1fr;}
+  .certs-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .modal-body{padding:1.25rem;}
+  .modal-overlay{padding:0;}
+  .modal-box{border-radius:0;min-height:100vh;}
+}
+@media(max-width:600px){.skills-grid{grid-template-columns:1fr;}.contact-grid{grid-template-columns:1fr;}.projects-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">M.S. Hada</div>
+  <ul class="nav-links">
+    <li><a href="#about-section">About</a></li>
+    <li><a href="#skills-section">Skills</a></li>
+    <li><a href="#exp-section">Experience</a></li>
+    <li><a href="#projects-section">Projects</a></li>
+    <li><a href="#contact-section">Contact</a></li>
+  </ul>
+  <a href="mailto:montakhada@gmail.com" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Data Analyst · Jaipur, India</div>
+      <h1>Montak Singh</h1>
+      <div class="hero-name-sub">Hada</div>
+      <p class="hero-desc">SQL · Python · Power BI · Machine Learning Support. ISRO-trained analyst who transforms raw datasets into boardroom-ready decisions. IBM BI Certified. Immediate joiner.</p>
+      <div class="hero-actions">
+        <a href="mailto:montakhada@gmail.com" class="btn-gold">Get In Touch</a>
+        <a href="#projects-section" class="btn-ghost">View Projects</a>
+      </div>
+    </div>
+    <div>
+      <div class="hero-panel">
+        <div class="panel-header">
+          <div class="panel-dot" style="background:#ff5f57"></div>
+          <div class="panel-dot" style="background:#febc2e"></div>
+          <div class="panel-dot" style="background:#28c840"></div>
+          <span class="panel-title">analyst_profile.json</span>
+        </div>
+        <div class="panel-body">
+          <div class="panel-stat">
+            <div><div class="ps-label">Datasets Processed</div><div class="ps-bar"><div class="ps-fill" style="width:92%"></div></div></div>
+            <div class="ps-val">10,000+</div>
+          </div>
+          <div class="panel-stat">
+            <div><div class="ps-label">Pipeline Efficiency Gain</div><div class="ps-bar"><div class="ps-fill" style="width:40%"></div></div></div>
+            <div class="ps-val">40%</div>
+          </div>
+          <div class="panel-stat">
+            <div><div class="ps-label">ML Accuracy Uplift</div><div class="ps-bar"><div class="ps-fill" style="width:25%"></div></div></div>
+            <div class="ps-val">25%</div>
+          </div>
+          <div class="panel-stat">
+            <div><div class="ps-label">End-to-End Projects</div><div class="ps-bar"><div class="ps-fill" style="width:50%"></div></div></div>
+            <div class="ps-val">5</div>
+          </div>
+          <div class="panel-stat">
+            <div><div class="ps-label">Certifications</div><div class="ps-bar"><div class="ps-fill" style="width:40%"></div></div></div>
+            <div class="ps-val">4</div>
+          </div>
+          <div class="availability-badge">
+            <div class="avail-dot"></div>
+            Available — Immediate Joiner · Remote / Gurgaon
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="section-wrap alt" id="about-section">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Profile</div>
+    <div class="sec-title">About Me</div>
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="about-meta">
+          <div class="meta-row"><span class="meta-key">Full Name</span><span class="meta-val">Montak Singh Hada</span></div>
+          <div class="meta-row"><span class="meta-key">Role</span><span class="meta-val">Data Analyst</span></div>
+          <div class="meta-row"><span class="meta-key">Email</span><span class="meta-val">montakhada@gmail.com</span></div>
+          <div class="meta-row"><span class="meta-key">Phone</span><span class="meta-val">+91 93584 11006</span></div>
+          <div class="meta-row"><span class="meta-key">Location</span><span class="meta-val">Jaipur, Rajasthan</span></div>
+          <div class="meta-row"><span class="meta-key">Education</span><span class="meta-val">B.Tech CSE — JECRC (7.50)</span></div>
+          <div class="meta-row"><span class="meta-key">Experience</span><span class="meta-val">ISRO + Industry</span></div>
+          <div class="meta-row"><span class="meta-key">Languages</span><span class="meta-val">English · Hindi · Gujarati</span></div>
+          <div class="meta-row"><span class="meta-key">Availability</span><span class="meta-val" style="color:var(--cyan)">Immediate Joiner</span></div>
+        </div>
+      </div>
+      <div class="about-text reveal" style="transition-delay:0.12s">
+        <p>I'm a <span class="hl">B.Tech Computer Science graduate (2024)</span> from JECRC University, Jaipur, with field-tested analytical experience from <span class="hl">ISRO — Indian Space Research Organisation</span> — one of the world's leading space agencies.</p>
+        <p>At ISRO, I engineered end-to-end Python pipelines to process and analyse over <span class="hl">10,000 satellite image tiles</span> (INSAT-1, Sentinel-1, Sentinel-2), surfacing <span class="hl">15+ previously undetected archaeological sites</span> through rigorous exploratory data analysis.</p>
+        <p>My project portfolio spans supply chain logistics optimization, book recommendation engines, fuel price analytics, and automotive market benchmarking — each project demonstrating the complete analytical lifecycle: from raw data ingestion to business-ready insight delivery.</p>
+        <p>I bring together technical depth in <span class="hl2">SQL, Python (Pandas, Scikit-learn), Power BI</span>, and Google Cloud with the communication skills needed to present findings clearly to non-technical stakeholders. Open to Data Analyst roles — <span class="hl">Remote · Gurgaon · Hybrid</span>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="section-wrap" id="skills-section">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Capabilities</div>
+    <div class="sec-title">Technical Skills</div>
+    <div class="skills-grid reveal">
+      <div class="skill-cell"><div class="skill-num">01</div><div class="skill-name">Data Querying</div><div class="skill-pills"><span class="pill">SQL</span><span class="pill">PostgreSQL</span><span class="pill">Power Query</span><span class="pill">Advanced Excel</span><span class="pill">VLOOKUP</span><span class="pill">PivotTables</span></div></div>
+      <div class="skill-cell"><div class="skill-num">02</div><div class="skill-name">Python Stack</div><div class="skill-pills"><span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">NumPy</span><span class="pill">Scikit-learn</span><span class="pill">Data Pipelines</span></div></div>
+      <div class="skill-cell"><div class="skill-num">03</div><div class="skill-name">Visualisation</div><div class="skill-pills"><span class="pill">Power BI</span><span class="pill">Matplotlib</span><span class="pill">Seaborn</span><span class="pill">Google Data Studio</span><span class="pill">Dashboards</span></div></div>
+      <div class="skill-cell"><div class="skill-num">04</div><div class="skill-name">ML &amp; Statistics</div><div class="skill-pills"><span class="pill">Feature Engineering</span><span class="pill">Supervised ML</span><span class="pill">EDA</span><span class="pill">Descriptive Stats</span><span class="pill">Anomaly Detection</span></div></div>
+      <div class="skill-cell"><div class="skill-num">05</div><div class="skill-name">Cloud &amp; Tools</div><div class="skill-pills"><span class="pill">GCP</span><span class="pill">Google Earth Engine</span><span class="pill">Git</span><span class="pill">VS Code</span><span class="pill">Jupyter</span></div></div>
+      <div class="skill-cell"><div class="skill-num">06</div><div class="skill-name">Professional</div><div class="skill-pills"><span class="pill">Stakeholder Reports</span><span class="pill">Agile</span><span class="pill">Documentation</span><span class="pill">Cross-functional</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<div class="section-wrap alt" id="exp-section">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Career</div>
+    <div class="sec-title">Experience</div>
+    <div class="exp-timeline">
+      <div class="exp-item reveal">
+        <div class="exp-dot"></div>
+        <div class="exp-period">Sep 2025 — Present</div>
+        <div class="exp-title">Customer Support Executive</div>
+        <div class="exp-org">Teleperformance Pvt. Ltd. — Amazon Account</div>
+        <div class="exp-loc">📍 Jaipur, Rajasthan</div>
+        <ul class="exp-bullets">
+          <li>Maintained high-volume data accuracy by logging interaction records and updating CRM databases — directly applicable to data quality assurance workflows.</li>
+          <li>Applied structured, data-driven analytical frameworks to resolve escalated queries, developing systematic problem-solving approaches.</li>
+          <li>Communicated findings and issue resolutions clearly to diverse stakeholders, building skills in presenting data insights to non-technical audiences.</li>
+        </ul>
+      </div>
+      <div class="exp-item reveal" style="transition-delay:0.1s">
+        <div class="exp-dot" style="background:var(--cyan);box-shadow:0 0 0 3px rgba(78,201,176,0.15)"></div>
+        <div class="exp-period">Mar 2024 — Jun 2024</div>
+        <div class="exp-title">Project Trainee — Remote Sensing &amp; Data Analysis</div>
+        <div class="exp-org">ISRO — Indian Space Research Organisation</div>
+        <div class="exp-loc">📍 Jodhpur, Rajasthan</div>
+        <ul class="exp-bullets">
+          <li>Collected, cleaned, and processed <strong style="color:var(--gold)">10,000+ satellite image tiles</strong> (INSAT-1, Sentinel-1, Sentinel-2), building end-to-end Python data pipelines using Pandas and NumPy.</li>
+          <li>Performed exploratory data analysis to identify patterns, trends, and anomalies; uncovered <strong style="color:var(--gold)">15+ previously undetected archaeological sites</strong> from the analysed data.</li>
+          <li>Applied feature engineering to prepare labelled datasets for ML model training, maintaining annotation accuracy and consistency at scale.</li>
+          <li>Integrated automated pipelines with the Google Earth Engine API, <strong style="color:var(--gold)">reducing manual processing time by ~40%</strong>.</li>
+          <li>Delivered structured technical reports translating ML outputs into actionable insights for cross-functional teams.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="section-wrap" id="projects-section">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Work</div>
+    <div class="sec-title">Data Projects</div>
+    <div class="projects-grid reveal">
+
+      <!-- SUPPLY CHAIN — live output -->
+      <div class="proj-card has-output" onclick="openModal('sc')">
+        <div class="proj-top">
+          <div class="proj-num">01 / 2025</div>
+          <div class="proj-badges"><span class="badge-new">New</span><span class="badge-live">Live Output</span></div>
+        </div>
+        <div class="proj-icon">🚚</div>
+        <div class="proj-title">Strategic Supply Chain &amp; Logistics Optimizer</div>
+        <div class="proj-desc">End-to-end analytics pipeline across 1,436 orders identifying SLA breaches and carrier bottlenecks. Engineered a custom <strong style="color:var(--gold)">Value Risk Score</strong> KPI (60% delay + 40% freight ratio) to flag high-risk shipments.</div>
+        <div class="proj-stack"><span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">Feature Engineering</span><span class="pill">Predictive Analytics</span></div>
+        <div class="proj-footer">
+          <div class="proj-output-hint">View full notebook output</div>
+          <a href="https://github.com/montakhada-oss" target="_blank" class="proj-link" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="proj-card" onclick="window.open('https://github.com/montakhada-oss','_blank')">
+        <div class="proj-top"><div class="proj-num">02 / 2024</div></div>
+        <div class="proj-icon">✈️</div>
+        <div class="proj-title">British Airways Data Science Virtual Experience</div>
+        <div class="proj-desc">Cleaned airline operational data and performed EDA to surface trends. Applied feature engineering to a predictive ML classification model, improving accuracy by <strong style="color:var(--gold)">25%</strong>. Delivered a stakeholder-ready Power BI dashboard.</div>
+        <div class="proj-stack"><span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">Scikit-learn</span><span class="pill">Power BI</span></div>
+        <div class="proj-footer">
+          <div></div>
+          <a href="https://github.com/montakhada-oss" target="_blank" class="proj-link" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="proj-card" onclick="window.open('https://github.com/montakhada-oss','_blank')">
+        <div class="proj-top"><div class="proj-num">03 / 2025</div></div>
+        <div class="proj-icon">📚</div>
+        <div class="proj-title">CodeBook Analytics &amp; Recommendation Engine</div>
+        <div class="proj-desc">End-to-end pipeline from raw JSON ingestion to structured analytics — cleaning, deduplicating, and normalising user data. Queried and aggregated with SQL to generate stakeholder insight summaries.</div>
+        <div class="proj-stack"><span class="pill">Python</span><span class="pill">SQL</span><span class="pill">Collaborative Filtering</span></div>
+        <div class="proj-footer">
+          <div></div>
+          <a href="https://github.com/montakhada-oss" target="_blank" class="proj-link" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="proj-card" onclick="window.open('https://github.com/montakhada-oss','_blank')">
+        <div class="proj-top"><div class="proj-num">04 / 2024</div></div>
+        <div class="proj-icon">⛽</div>
+        <div class="proj-title">Real-Time Fuel Price Tracker</div>
+        <div class="proj-desc">Automated real-time data collection and aggregation from multiple sources. Built dynamic Matplotlib visualisations for trend monitoring and rapid price anomaly detection.</div>
+        <div class="proj-stack"><span class="pill">Python</span><span class="pill">Matplotlib</span><span class="pill">Data Aggregation</span><span class="pill">Automation</span></div>
+        <div class="proj-footer">
+          <div></div>
+          <a href="https://github.com/montakhada-oss" target="_blank" class="proj-link" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="proj-card" onclick="window.open('https://colab.research.google.com/github/montakhada-oss/Data-Analytics-Portfolio/blob/main/Auto_data_analyst_project.ipynb','_blank')">
+        <div class="proj-top"><div class="proj-num">05 / 2025</div></div>
+        <div class="proj-icon">🚗</div>
+        <div class="proj-title">SmartDrive: Indian Automotive Market Value Analyzer</div>
+        <div class="proj-desc">Benchmarked 13 Indian compact SUV variants. Engineered a custom <strong style="color:var(--gold)">Value Score (BHP ÷ Price)</strong> for unbiased comparisons — identified Mahindra XUV3XO MX1 &amp; Maruti Brezza LXi as top budget picks under ₹8.5L.</div>
+        <div class="proj-stack"><span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">Matplotlib</span><span class="pill">Seaborn</span></div>
+        <div class="proj-footer">
+          <div></div>
+          <a href="https://colab.research.google.com/github/montakhada-oss/Data-Analytics-Portfolio/blob/main/Auto_data_analyst_project.ipynb" target="_blank" class="proj-link" onclick="event.stopPropagation()">Colab ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATIONS -->
+<div class="section-wrap alt" id="certs-section">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Credentials</div>
+    <div class="sec-title">Certifications</div>
+    <div class="certs-grid reveal">
+      <div class="cert-cell">
+        <div class="cert-icon-row"><div class="cert-ico">🏆</div><div class="cert-issuer">IBM</div></div>
+        <div class="cert-name">Business Intelligence &amp; Visualisations</div>
+        <div class="cert-detail">Cognos · Tableau · SQL · Data Analysis</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-icon-row"><div class="cert-ico">☁️</div><div class="cert-issuer">Google</div></div>
+        <div class="cert-name">Cloud Fundamentals: Core Infrastructure</div>
+        <div class="cert-detail">GCP · Compute Engine · Cloud AI Tooling</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-icon-row"><div class="cert-ico">📈</div><div class="cert-issuer">Goldman Sachs / Forage</div></div>
+        <div class="cert-name">Virtual Experience Program</div>
+        <div class="cert-detail">Analytical Problem Solving Under Constraints</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-icon-row"><div class="cert-ico">⚡</div><div class="cert-issuer">Cognizant / Forage</div></div>
+        <div class="cert-name">Agile Methodology Virtual Experience</div>
+        <div class="cert-detail">Agile · Sprint Workflows · Team Collaboration</div>
+      </div>
+    </div>
+    <div class="hackathon-bar reveal" style="transition-delay:0.1s">
+      <div class="hack-medal">🥉</div>
+      <div>
+        <div class="hack-title">Smart India Hackathon — 3rd Position</div>
+        <div class="hack-sub">Built an analytical tech solution under 48-hour sprint constraints · College Level</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="section-wrap" id="contact-section">
+  <div class="contact-inner">
+    <div class="sec-eyebrow" style="justify-content:center">Get In Touch</div>
+    <div class="sec-title" style="text-align:center">Let's Talk Data</div>
+    <p class="contact-desc">I'm actively seeking entry-level Data Analyst opportunities and am an immediate joiner. Whether you have a role, a project, or just want to discuss data — I'd love to hear from you.</p>
+    <div class="contact-grid reveal">
+      <a href="mailto:montakhada@gmail.com" class="contact-cell"><div class="contact-ico">📧</div><div><div class="contact-label">Email</div><div class="contact-val">montakhada@gmail.com</div></div></a>
+      <a href="tel:+919358411006" class="contact-cell"><div class="contact-ico">📱</div><div><div class="contact-label">Phone</div><div class="contact-val">+91 93584 11006</div></div></a>
+      <a href="https://linkedin.com/in/montak-hada-0b92b4231" target="_blank" class="contact-cell"><div class="contact-ico">💼</div><div><div class="contact-label">LinkedIn</div><div class="contact-val">montak-hada-0b92b4231</div></div></a>
+      <div class="contact-cell"><div class="contact-ico">📍</div><div><div class="contact-label">Location</div><div class="contact-val">Jaipur · Remote · Gurgaon</div></div></div>
+    </div>
+    <a href="mailto:montakhada@gmail.com" class="btn-gold" style="display:inline-flex;margin-top:1rem;">Send a Message →</a>
+  </div>
+</div>
+
+<footer>© 2026 Montak Singh Hada &nbsp;·&nbsp; Data Analyst &nbsp;·&nbsp; montakhada@gmail.com</footer>
+
+<!-- ══════════ SUPPLY CHAIN MODAL ══════════ -->
+<div class="modal-overlay" id="modal-sc" onclick="closeOutside(event,'sc')">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-l">
+        <span style="font-size:1.3rem">🚚</span>
+        <div>
+          <div class="modal-hdr-title">Strategic Supply Chain &amp; Logistics Optimizer</div>
+          <div class="modal-hdr-sub">Python · Pandas · Feature Engineering · Predictive Analytics &nbsp;|&nbsp; 1,436 orders · Jan–Mar 2026</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('sc')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="nb-sec-title">1. Imports &amp; Setup</div>
+      <div class="nb-sec-sub">// loading libraries and ingesting cleaned pipeline dataset</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [1]:</div>
+        <div class="nb-code"><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+df = pd.<span class="fn">read_csv</span>(<span class="st">'strategic_supply_chain_clean.csv'</span>)
+df[<span class="st">'order_purchase_timestamp'</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="st">'order_purchase_timestamp'</span>])
+<span class="fn">print</span>(<span class="fn">f</span><span class="st">"Dataset loaded: {df.shape[0]:,} orders × {df.shape[1]} columns"</span>)</code></div></div>
+        <div class="nb-out">Dataset loaded: 1,436 orders × 18 columns</div>
+      </div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [2]:</div>
+        <div class="nb-code"><code>df.<span class="fn">head</span>(3)</code></div></div>
+        <div style="margin-left:62px;overflow-x:auto;margin-bottom:1rem;">
+          <table class="top-tbl" style="min-width:660px">
+            <tr><th style="text-align:left">order_id</th><th>carrier</th><th>price (₹)</th><th>freight (₹)</th><th>lead_actual</th><th>lead_est</th><th>delay_days</th><th>is_late</th><th>risk_score</th></tr>
+            <tr><td>ORD_00000</td><td style="text-align:left;color:var(--text2)">DHL Express</td><td>3,741.50</td><td>413.39</td><td>2.63</td><td>5.54</td><td>-2.92</td><td>0</td><td>0.044</td></tr>
+            <tr><td>ORD_00001</td><td style="text-align:left;color:var(--text2)">Delhivery</td><td>6,449.52</td><td>488.55</td><td>3.68</td><td>7.50</td><td>-3.82</td><td>0</td><td>0.030</td></tr>
+            <tr><td>ORD_00002</td><td style="text-align:left;color:var(--text2)">DHL Express</td><td>9,133.35</td><td>1,451.11</td><td>1.93</td><td>4.58</td><td>-2.65</td><td>0</td><td>0.064</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="nb-sec-title">2. Exploratory Data Analysis</div>
+      <div class="nb-sec-sub">// core KPIs, delivery performance, freight cost distribution</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [3]:</div>
+        <div class="nb-code"><code><span class="cm"># Core pipeline KPIs</span>
+late_pct  = (df[<span class="st">'is_late'</span>].<span class="fn">sum</span>() / <span class="fn">len</span>(df) * 100).<span class="fn">round</span>(2)
+avg_delay = df[<span class="st">'delivery_delay_days'</span>].<span class="fn">mean</span>().<span class="fn">round</span>(2)
+avg_risk  = df[<span class="st">'value_risk_score'</span>].<span class="fn">mean</span>().<span class="fn">round</span>(3)
+<span class="fn">print</span>(late_pct, avg_delay, avg_risk)</code></div></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-box"><div class="kpi-v">1,436</div><div class="kpi-l">Total Orders</div><div class="kpi-d" style="color:var(--cyan)">Jan–Mar 2026</div></div>
+        <div class="kpi-box"><div class="kpi-v">26.9%</div><div class="kpi-l">SLA Breach Rate</div><div class="kpi-d" style="color:var(--red)">386 late deliveries</div></div>
+        <div class="kpi-box"><div class="kpi-v">−1.24</div><div class="kpi-l">Avg Delay (days)</div><div class="kpi-d" style="color:#4ade80">Arrived early avg</div></div>
+        <div class="kpi-box"><div class="kpi-v">0.258</div><div class="kpi-l">Avg Risk Score</div><div class="kpi-d" style="color:var(--red)">Max: 1.29</div></div>
+      </div>
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="chart-title">Delivery delay distribution</div>
+          <div class="chart-sub">Negative = early arrival · Positive = late</div>
+          <div class="leg-row"><span><span class="leg-sq" style="background:#378ADD"></span>Early/On-time (1,050)</span><span><span class="leg-sq" style="background:#e06c75"></span>Late (386)</span></div>
+          <div style="position:relative;height:175px"><canvas id="m-delay"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Value risk score distribution</div>
+          <div class="chart-sub">Custom KPI: 0.6×delay + 0.4×freight ratio</div>
+          <div class="leg-row"><span><span class="leg-sq" style="background:#4ec9b0"></span>Low (733)</span><span><span class="leg-sq" style="background:#c9a84c"></span>Med-High (299)</span><span><span class="leg-sq" style="background:#e06c75"></span>Critical (404)</span></div>
+          <div style="position:relative;height:175px"><canvas id="m-risk"></canvas></div>
+        </div>
+      </div>
+
+      <div class="nb-sec-title">3. Carrier SLA Diagnostics</div>
+      <div class="nb-sec-sub">// performance breakdown across all 4 distribution partners</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [5]:</div>
+        <div class="nb-code"><code>carrier_stats = df.<span class="fn">groupby</span>(<span class="st">'seller_id'</span>).<span class="fn">agg</span>(
+    orders=(<span class="st">'order_id'</span>,<span class="st">'count'</span>), late=(<span class="st">'is_late'</span>,<span class="st">'sum'</span>),
+    avg_delay=(<span class="st">'delivery_delay_days'</span>,<span class="st">'mean'</span>), avg_risk=(<span class="st">'value_risk_score'</span>,<span class="st">'mean'</span>)
+).<span class="fn">round</span>(3)
+carrier_stats[<span class="st">'late_pct'</span>] = (carrier_stats[<span class="st">'late'</span>] / carrier_stats[<span class="st">'orders'</span>] * 100).<span class="fn">round</span>(1)
+carrier_stats</code></div></div>
+      </div>
+      <div style="overflow-x:auto;margin-bottom:1.5rem">
+        <table class="carrier-tbl">
+          <tr><th>Carrier</th><th>Orders</th><th>Late</th><th>Late %</th><th>Avg Delay</th><th>Avg Risk</th><th>Verdict</th></tr>
+          <tr><td><strong>BlueDart</strong></td><td>367</td><td>96</td><td><span class="b-warn">26.2%</span></td><td>−1.135 days</td><td>0.244</td><td><span class="b-warn">Monitor</span></td></tr>
+          <tr><td><strong>DHL Express</strong></td><td>369</td><td>116</td><td><span class="b-bad">31.4%</span></td><td>−1.039 days</td><td>0.286</td><td><span class="b-bad">High Risk</span></td></tr>
+          <tr><td><strong>Delhivery</strong></td><td>338</td><td>77</td><td><span class="b-ok">22.8%</span></td><td>−1.532 days</td><td>0.231</td><td><span class="b-ok">Best Performer</span></td></tr>
+          <tr><td><strong>FedEx Trans</strong></td><td>362</td><td>97</td><td><span class="b-warn">26.8%</span></td><td>−1.296 days</td><td>0.269</td><td><span class="b-warn">Monitor</span></td></tr>
+        </table>
+      </div>
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="chart-title">Late % by carrier</div>
+          <div class="chart-sub">DHL Express highest at 31.4%</div>
+          <div style="position:relative;height:155px"><canvas id="m-clate"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Avg risk score by carrier</div>
+          <div class="chart-sub">DHL Express carries highest avg risk</div>
+          <div style="position:relative;height:155px"><canvas id="m-crisk"></canvas></div>
+        </div>
+      </div>
+
+      <div class="nb-sec-title">4. Value Risk Score — Engineered KPI</div>
+      <div class="nb-sec-sub">// custom metric: 60% SLA breach impact + 40% freight-to-price ratio</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [6]:</div>
+        <div class="nb-code"><code><span class="cm"># Risk bands: Very Low &lt;0.05 | Low &lt;0.10 | Medium &lt;0.20 | High &lt;0.50 | Critical ≥0.50</span>
+bins   = [0, 0.05, 0.10, 0.20, 0.50, <span class="fn">float</span>(<span class="st">'inf'</span>)]
+labels = [<span class="st">'Very Low'</span>,<span class="st">'Low'</span>,<span class="st">'Medium'</span>,<span class="st">'High'</span>,<span class="st">'Critical'</span>]
+df[<span class="st">'risk_band'</span>] = pd.<span class="fn">cut</span>(df[<span class="st">'value_risk_score'</span>], bins=bins, labels=labels)
+df[<span class="st">'risk_band'</span>].<span class="fn">value_counts</span>()</code></div></div>
+      </div>
+      <div class="risk-rows">
+        <div class="risk-row"><span style="color:var(--text3)">Critical</span><div class="risk-bar"><div class="risk-fill" style="width:100%;background:#e06c75"></div></div><span style="color:var(--text)">404</span></div>
+        <div class="risk-row"><span style="color:var(--text3)">Very Low</span><div class="risk-bar"><div class="risk-fill" style="width:93%;background:#4ec9b0"></div></div><span style="color:var(--text)">378</span></div>
+        <div class="risk-row"><span style="color:var(--text3)">Low</span><div class="risk-bar"><div class="risk-fill" style="width:88%;background:#378ADD"></div></div><span style="color:var(--text)">355</span></div>
+        <div class="risk-row"><span style="color:var(--text3)">Medium</span><div class="risk-bar"><div class="risk-fill" style="width:48%;background:#c9a84c"></div></div><span style="color:var(--text)">192</span></div>
+        <div class="risk-row"><span style="color:var(--text3)">High</span><div class="risk-bar"><div class="risk-fill" style="width:26%;background:#e8955a"></div></div><span style="color:var(--text)">107</span></div>
+      </div>
+
+      <div class="nb-sec-title">5. Top 10 High-Risk Orders</div>
+      <div class="nb-sec-sub">// highest value risk scores — all confirmed late (is_late = 1)</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [7]:</div>
+        <div class="nb-code"><code>df.<span class="fn">nlargest</span>(10, <span class="st">'value_risk_score'</span>)[[<span class="st">'order_id'</span>,<span class="st">'seller_id'</span>,<span class="st">'price'</span>,<span class="st">'freight_value'</span>,<span class="st">'delivery_delay_days'</span>,<span class="st">'value_risk_score'</span>]]</code></div></div>
+      </div>
+      <div style="overflow-x:auto;margin-bottom:1.5rem">
+        <table class="top-tbl">
+          <tr><th>order_id</th><th>carrier</th><th>price (₹)</th><th>freight (₹)</th><th>delay (days)</th><th>risk score</th></tr>
+          <tr><td>ORD_01002</td><td style="text-align:left;color:var(--text3)">FedEx Trans</td><td>11,994</td><td>1,799</td><td style="color:var(--red)">+20.2</td><td style="color:var(--red);font-weight:700">1.290</td></tr>
+          <tr><td>ORD_01033</td><td style="text-align:left;color:var(--text3)">FedEx Trans</td><td>11,450</td><td>1,756</td><td style="color:var(--red)">+18.9</td><td style="color:var(--red);font-weight:700">1.235</td></tr>
+          <tr><td>ORD_00977</td><td style="text-align:left;color:var(--text3)">FedEx Trans</td><td>10,822</td><td>1,780</td><td style="color:var(--red)">+17.8</td><td style="color:var(--red);font-weight:700">1.215</td></tr>
+          <tr><td>ORD_00532</td><td style="text-align:left;color:var(--text3)">Delhivery</td><td>9,743</td><td>1,795</td><td style="color:var(--red)">+16.6</td><td style="color:var(--red);font-weight:700">1.166</td></tr>
+          <tr><td>ORD_01037</td><td style="text-align:left;color:var(--text3)">FedEx Trans</td><td>11,200</td><td>1,721</td><td style="color:var(--red)">+16.1</td><td style="color:var(--red);font-weight:700">1.145</td></tr>
+          <tr><td>ORD_00314</td><td style="text-align:left;color:var(--text3)">FedEx Trans</td><td>10,950</td><td>1,690</td><td style="color:var(--red)">+14.9</td><td style="color:var(--red);font-weight:700">1.044</td></tr>
+          <tr><td>ORD_01088</td><td style="text-align:left;color:var(--text3)">DHL Express</td><td>10,810</td><td>1,791</td><td style="color:var(--red)">+14.3</td><td style="color:var(--red);font-weight:700">1.040</td></tr>
+          <tr><td>ORD_00169</td><td style="text-align:left;color:var(--text3)">DHL Express</td><td>11,321</td><td>1,742</td><td style="color:var(--red)">+13.8</td><td style="color:var(--red);font-weight:700">1.032</td></tr>
+          <tr><td>ORD_01380</td><td style="text-align:left;color:var(--text3)">BlueDart</td><td>10,655</td><td>1,799</td><td style="color:var(--red)">+13.4</td><td style="color:var(--red);font-weight:700">1.016</td></tr>
+          <tr><td>ORD_00741</td><td style="text-align:left;color:var(--text3)">BlueDart</td><td>10,430</td><td>1,788</td><td style="color:var(--red)">+12.9</td><td style="color:var(--red);font-weight:700">0.992</td></tr>
+        </table>
+      </div>
+
+      <div class="nb-sec-title">6. Monthly Order &amp; SLA Trend</div>
+      <div class="nb-sec-sub">// January–March 2026 pipeline overview</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [8]:</div>
+        <div class="nb-code"><code>df[<span class="st">'month'</span>] = df[<span class="st">'order_purchase_timestamp'</span>].dt.<span class="fn">to_period</span>(<span class="st">'M'</span>)
+monthly = df.<span class="fn">groupby</span>(<span class="st">'month'</span>).<span class="fn">agg</span>(orders=(<span class="st">'order_id'</span>,<span class="st">'count'</span>),late=(<span class="st">'is_late'</span>,<span class="st">'sum'</span>))
+monthly</code></div></div>
+      </div>
+      <div class="chart-card" style="margin-bottom:1.5rem">
+        <div class="chart-title">Monthly orders vs late deliveries</div>
+        <div class="leg-row"><span><span class="leg-sq" style="background:#378ADD"></span>Total orders</span><span><span class="leg-sq" style="background:#e06c75"></span>Late deliveries</span></div>
+        <div style="position:relative;height:175px"><canvas id="m-monthly"></canvas></div>
+      </div>
+
+      <div class="nb-sec-title">7. Key Findings &amp; Recommendations</div>
+      <div class="nb-sec-sub">// business-actionable insights derived from the pipeline</div>
+      <div class="nb-cell">
+        <div class="nb-row"><div class="nb-lbl">In [9]:</div>
+        <div class="nb-code"><code><span class="fn">print</span>(<span class="st">"=== PIPELINE DIAGNOSTIC SUMMARY ==="</span>)</code></div></div>
+      </div>
+      <div class="ins-box"><div class="ins-lbl">Finding 1 — SLA Breach</div>26.9% of all 1,436 shipments breached SLA (386 late orders). The worst single delay was +20.2 days on ORD_01002 via FedEx Trans, generating a risk score of 1.29 — the highest in the dataset.</div>
+      <div class="ins-box warn"><div class="ins-lbl">Finding 2 — Carrier Flag: DHL Express</div>DHL Express has the highest SLA breach rate at 31.4% (116/369 orders) and the highest avg risk score at 0.286. Recommend SLA renegotiation or volume reallocation to Delhivery.</div>
+      <div class="ins-box ok"><div class="ins-lbl">Finding 3 — Best Performer: Delhivery</div>Delhivery has the lowest late rate (22.8%), lowest risk score (0.231), and best avg lead time (−1.53 days ahead of SLA). Recommended as priority carrier for high-value shipments.</div>
+      <div class="ins-box amber"><div class="ins-lbl">Finding 4 — Critical Risk Band</div>404 orders (28.1%) fall in the Critical risk band (score ≥ 0.50). All top-10 highest risk orders are confirmed late with freight costs near maximum (₹1,700–1,800), indicating a strong correlation between freight overhead and delivery failure.</div>
+      <div class="ins-box"><div class="ins-lbl">Finding 5 — Value Risk Score Utility</div>The engineered KPI (60% delay weight + 40% freight ratio) successfully isolates late high-cost shipments. FedEx Trans dominates the top-10 risk list (6/10 orders), confirming systematic failure for premium-priced shipments.</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* scroll reveal */
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+document.querySelectorAll('#hero .reveal').forEach(el=>el.classList.add('in'));
+
+/* modal */
+let built={};
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';if(!built[id]){buildCharts(id);built[id]=true;}}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
+function closeOutside(e,id){if(e.target===document.getElementById('modal-'+id))closeModal(id);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>{m.classList.remove('open');document.body.style.overflow='';});});
+
+/* charts */
+function buildCharts(id){
+  if(id!=='sc')return;
+  const b='#378ADD',r='#e06c75',g='#4ec9b0',am='#c9a84c';
+  const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},animation:{duration:500}};
+  const gridColor='rgba(255,255,255,0.04)';
+  const tickColor='#4a5068';
+
+  new Chart(document.getElementById('m-delay'),{type:'bar',
+    data:{labels:['-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','8','10','12+'],
+    datasets:[{data:[12,38,95,142,198,210,175,95,48,38,29,22,18,14,19,12,268],
+    backgroundColor:[b,b,b,b,b,b,b,b,r,r,r,r,r,r,r,r,r],borderWidth:0}]},
+    options:{...base,scales:{x:{ticks:{font:{size:9},color:tickColor,autoSkip:true,maxRotation:0},grid:{display:false}},y:{ticks:{font:{size:9},color:tickColor},grid:{color:gridColor}}}}});
+
+  new Chart(document.getElementById('m-risk'),{type:'bar',
+    data:{labels:['0.00','0.05','0.10','0.20','0.30','0.40','0.50','0.65','0.80','0.95','1.10+'],
+    datasets:[{data:[45,333,355,192,107,0,90,130,100,64,50],
+    backgroundColor:[g,g,g,am,am,am,r,r,r,r,r],borderWidth:0}]},
+    options:{...base,scales:{x:{ticks:{font:{size:9},color:tickColor,autoSkip:true,maxRotation:45},grid:{display:false}},y:{ticks:{font:{size:9},color:tickColor},grid:{color:gridColor}}}}});
+
+  new Chart(document.getElementById('m-clate'),{type:'bar',
+    data:{labels:['BlueDart','DHL Express','Delhivery','FedEx Trans'],
+    datasets:[{data:[26.2,31.4,22.8,26.8],backgroundColor:[am,r,g,am],borderRadius:3,borderWidth:0}]},
+    options:{...base,indexAxis:'y',scales:{x:{min:0,max:40,ticks:{font:{size:9},color:tickColor,callback:v=>v+'%'},grid:{color:gridColor}},y:{ticks:{font:{size:10},color:'#c9d1d9'},grid:{display:false}}}}});
+
+  new Chart(document.getElementById('m-crisk'),{type:'bar',
+    data:{labels:['BlueDart','DHL Express','Delhivery','FedEx Trans'],
+    datasets:[{data:[0.244,0.286,0.231,0.269],backgroundColor:[am,r,g,am],borderRadius:3,borderWidth:0}]},
+    options:{...base,indexAxis:'y',scales:{x:{min:0,max:0.35,ticks:{font:{size:9},color:tickColor,callback:v=>v.toFixed(2)},grid:{color:gridColor}},y:{ticks:{font:{size:10},color:'#c9d1d9'},grid:{display:false}}}}});
+
+  new Chart(document.getElementById('m-monthly'),{type:'bar',
+    data:{labels:['Jan 2026','Feb 2026','Mar 2026'],
+    datasets:[{label:'Total',data:[713,641,82],backgroundColor:b,borderRadius:3,borderWidth:0},{label:'Late',data:[187,175,24],backgroundColor:r,borderRadius:3,borderWidth:0}]},
+    options:{...base,scales:{x:{ticks:{font:{size:10},color:'#c9d1d9'},grid:{display:false}},y:{ticks:{font:{size:9},color:tickColor},grid:{color:gridColor}}}}});
+}
+</script>
+</body>
+</html>
